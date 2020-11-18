@@ -1,0 +1,61 @@
+<HTML>
+
+<title>NetBurner SSL Example Program</title>
+ 
+<BODY bgcolor="#FFFFFF">
+
+<img src="images/NetBurnerSSLDemo.gif" width="273" height="141"> 
+<BR><BR>
+  This SSL (Secure Socket Layer) 
+  example program is designed to demonstrate how you can create a web site with 
+  protected content. A subdirectory called &quot;httpsdir&quot; contains all the 
+  files that require SSL encryption. When a user tries to access any of these files 
+  the application will check for a valid SSL connection. If the connection is valid 
+  the user will be able to access the web page. If the connection is not valid, 
+  meaning it is plain HTTP, then the access is deemed unauthorized and the user 
+  sent a FORBIDDEN response code. This example uses a default SSL certificate that
+  will generate some warnings because it was not made specifically for the IP
+  address used at your location. 
+
+<br><br>
+<b>Running the Example:</b>
+<br>
+
+<ol>
+  <li>When you first view the page, you will probably be using HTTP (http://x.x.x.x/index.htm). You will 
+    also notice that there is a graphic in the box below which indicates that 
+    the connection is currently not secure. Try clicking on the &quot;View 
+    httpsdir\repeat.html&quot; now.</li>
+  <li>Since you are attempting to view the protected SSL page without without 
+    SSL (ie http instead of https), you will be given a FORBIDDEN response code.</li>
+  <li>Now click on the &quot;View index.htm with SSL&quot; link (https://x.x.x.x/index.htm).</li>
+  <li>Now both links use https instead of http, so you can click on the protected page 
+    link and access the files in the httpsdir directory. Click on the 
+    &quot;Enter protected SSL page&quot; link.</li>
+</ol>
+
+<table width="44%" border="1" cellspacing="0" cellpadding="10" align="center" bordercolor="#000000">
+  <tr>
+    <td>
+    <img src="<!--FUNCTIONCALL SSL_Image -->" width="520" height="95" border="0"><br>
+    <p><font face="Arial, Helvetica, sans-serif" size="4"><b><a href= <!--FUNCTIONCALL HTTPS_Ref -->>
+      View index.htm with SSL</a> </b></font>
+    </p>
+    <p><font face="Arial, Helvetica, sans-serif" size="2">Clicking the above link
+        link will use https instead of http. 
+    </font></p>
+    <p><b><font face="Arial, Helvetica, sans-serif" size="4">
+      <a href="httpsdir/repeat.html">View httpsdir\repeat.html</a>
+    </font></b></p>
+    <p><font face="Arial, Helvetica, sans-serif" size="2"> 
+        Clicking on this link will result in a FORBIDDEN response code for unsecure
+        access (ie http), or will load the repeat.html page if the request uses
+        SSL (ie https). The URL in the above link is set to http or https to match
+        the URL of index.htm. To view repeat.html, first click on "View index.htm with SSL".
+    </font></p>    
+   </td>
+ </tr>
+</table>
+</BODY>
+ </HTML>
+ 

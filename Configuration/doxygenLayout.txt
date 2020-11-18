@@ -1,0 +1,5 @@
+Doxygen Layout Page
+/** @pagegroup{pageExamples,Configuration,Configuration}
+
+This is the documentation for Configuration functionality.
+*/

@@ -1,0 +1,272 @@
+﻿<html>
+<head>
+    <meta charset="utf-8">
+    <title>Custom Config System Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Le styles -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-grid.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-reboot.min.css" rel="stylesheet">
+</head>
+<body>
+    <div style="margin: 25px" id="contentBody">
+        <div class="container">
+            <div class="row">
+                <div class="col-4">
+                    <img src="/img/YourLogoHere.png" class="img-fluid" alt="Responsive image" />
+                </div>
+                <div class="col-7">
+                    <h3>
+                        Just because you're toying with the bowels of the universe like a newborn kitten and a ball of string doesn't mean it has to look like it. With Netburner's blazing systems and modern web styling, your embedded interface can be as good looking as you. Well, almost.
+                    </h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-1">
+                </div>
+                <div class="col-10">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="app-tab" data-toggle="tab" href="#app" role="tab" aria-controls="app" aria-selected="true" onclick="BuildAppData()">Application Data</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="boot-tab" data-toggle="tab" href="#boot" role="tab" aria-controls="boot" aria-selected="false" onclick="BuildBootConfig()">Boot Config</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="network-tab" data-toggle="tab" href="#network" role="tab" aria-controls="network" aria-selected="false" onclick="BuildNetworkConfig()">Network Config</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="tabContent">
+                        <div class="tab-pane fade show active" id="app" role="tabpanel" aria-labelledby="app-tab">
+                            <div class="row">
+                                <div class="col-8" id="appContent"></div>
+                                <div class="col-1">
+                                    <input type="button" class="btn btn-dark" onclick="PostAppData()" value="Update Record" style="margin-top: 250px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="boot" role="tabpanel" aria-labelledby="boot-tab">
+                            <div class="row">
+                                <div class="col-8" id="bootContent"></div>
+                                <div class="col-1">
+                                    <input type="button" class="btn btn-dark" onclick="PostBootConfig()" value="Update Record" style="margin-top: 250px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="network" role="tabpanel" aria-labelledby="network-tab">
+                            <div class="row">
+                                <div class="col-8" id="networkContent"></div>
+                                <div class="col-1">
+                                    <input type="button" class="btn btn-dark" onclick="PostNetworkConfig()" value="Update Record" style="margin-top: 250px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        var jsonData;  // This holds our JSON data
+
+        function BuildAppData() {
+            BuildForm("Config/AppData", "#appContent");
+        }
+
+        function BuildBootConfig() {
+            BuildForm("Config/Sys/Boot", "#bootContent");
+        }
+
+        function BuildNetworkConfig() {
+            BuildForm("Config/Sys/NetIf", "#networkContent");
+        }
+
+        // This is to make sure certain network config values uneditable
+        function IsEditable(key) {
+            var ret = !key.includes("ActiveAddr_array");
+            ret = ret & !key.includes("ActiveDNS_array");
+            ret = ret & !key.includes("ActiveRoute_array");
+            ret = ret & !key.includes("ActiveAddr");
+            ret = ret & !key.includes("ActiveDNS1");
+            ret = ret & !key.includes("ActiveDNS2");
+            ret = ret & !key.includes("ActiveGate");
+            ret = ret & !key.includes("ActiveMask");
+            ret = ret & !key.includes("AutoIPAddr");
+            ret = ret & !key.includes("MAC");
+            return ret;
+        }
+
+        // Take the current JSON data, the current list of items in the form, our level of
+        // recursion, and the parent's key, and go through the JSON data, adding input
+        // fields that correspond with the JSON object
+        function BuildItems(data, items, level, parentKey) {
+            $.each(data, function (key, val) {
+                var idKey = parentKey + key;
+
+                // If the value is an object, then we need to figure out what kind, and handle it appropriately
+                if (typeof val === "object") {
+                    var isDropDown = false; // Dropdown items needs some special handling
+                    var isArray = false;    // So do items with arrays as values
+                    var choices = [];       // Populated by the dropdown choices
+                    var value = "";
+
+                    // Determine if we need special handling (dropdown items, or array values)
+                    $.each(val, function (childKey, childVal) {
+                        // Try to identify a dropdown menu, which needs both "choices" and a "value"
+                        if (typeof childKey === "string") {
+                            if (childKey.toUpperCase() === "CHOICES") {
+                                isDropDown = true;
+                                choices = childVal.split(",");
+                            }
+                            else if (childKey.toUpperCase() === "VALUE") {
+                                value = childVal;
+                            }
+                        }
+                        // Try to identify an array, which has a key of type number
+                        else if (typeof childKey === "number") {
+                            isArray = true;
+                        }
+                    });
+
+                    // If this is a dropdown menu, build the options
+                    if (isDropDown === true) {
+                        items.push("<div class='form-group row' style='margin-left: " + 25 + "px;'><label for='" + idKey + "' class='col-sm-4 col-form-label form-control-sm' style='padding-left: 0px'>" + key + "</label>");
+                        items.push("<div class='col-sm-6'><select class='form-control form-control-sm' id='" + idKey + "'>");
+                        choices.forEach(function (element) {
+                            if (element === value) {
+                                items.push("<option selected='selected'>" + element + "</option>");
+                            }
+                            else {
+                                items.push("<option>" + element + "</option>");
+                            }
+                        });
+                        items.push("</select></div></div>");
+                    }
+                    // Otherwise, since we're an object, we know we're going to contain subitems, so let's build them
+                    else {
+                        var headerVal = Math.min(level + 1, 5);
+                        items.push("<div class='form-group' style='margin-left: " + 25 + "px;'><h" + headerVal + ">" + key + "</h" + headerVal + ">")
+                        var buildItemsKey = isArray ? key + "_array" : key + "_";  // Array items need a special key
+                        BuildItems(val, items, level + 1, buildItemsKey);
+                        items.push("</div>");
+                    }
+                }
+                else {
+                    // If we're dealing with a simple key/value pair, build the input
+                    var readOnly = IsEditable(parentKey + key) ? "" : "readonly";
+                    var inputType = ( ( typeof key === "string" ) && key.toLowerCase().includes("password") ) ? "password" : "text"; 
+                    items.push("<div class='form-group row' style='margin-left: " + 25 + "px;'><label for='" + idKey + "' class='col-sm-4 col-form-label form-control-sm' style='padding-left: 0px'>" + key + "</label>");
+                    items.push("<div class='col-sm-6'><input class='form-control form-control-sm' id='" + idKey + "' type='" + inputType + "' value=" + val + " " + readOnly + "></div></div>");
+                }
+            });
+        }
+
+        // Take the config JSON object, and recursively build a form out of it
+        function BuildForm(url, appendId) {
+            $.getJSON(url, function (data) {
+                var items = [];
+
+                // Save our data, so we can modify any values
+                jsonData = data;
+
+                items.push("<div>");
+                // This is where the magic happens
+                BuildItems(data, items, 0, "");
+                items.push("</div>");
+
+                // Clear out any old data
+                $(appendId).html("");
+
+                // Rebuild it
+                $("<form/>", {
+                    "class": "form_data",
+                    html: items.join("")
+                }).appendTo(appendId);
+            });
+        }
+
+        // Take the form data, use it to update the JSON data we saved, and send it to the server
+        function UpdateJsonFromForm( data, parentKey ) {
+            $.each(data, function (key, val) {
+                var elemId = "#" + parentKey + key;
+
+                // Objects still need special handling
+                if (typeof val === 'object') {
+                    var isDropDown = false; // Are we trying to save a dropdown with choices?
+                    var isArray = false;    // Or are we trying to save a key/value pair where the value is an array
+                    $.each(val, function (childKey, childVal) {
+                        // Try to identify a dropdown menu, which needs both "choices" and a "value"
+                        if (typeof childKey === "string") {
+                            if (childKey.toUpperCase() === "CHOICES") {
+                                isDropDown = true;
+                            }
+                            if (childKey.toUpperCase() === "VALUE") {
+                                console.log("   Updating dropdown" + elemId + " with value: " + $(elemId).find(":selected").text());
+                                val[childKey] = $(elemId).val();
+                            }
+                        }
+                        // Identify an array, whose id will be based on the parent's key
+                        else if (typeof childKey === "number") {
+                            isArray = true;
+                        }
+                    });
+
+                    // If we're not simply dealing with a dropdown, descend into the subobjects
+                    if (!isDropDown) {
+                        var updateKey = isArray ? key + "_array" : key + "_";  // Handle the special key for arrays
+                        UpdateJsonFromForm(val, updateKey);
+                    }
+                }
+                else {
+                    // If it's just a key value pair, figure out what data type it should be, and set it
+                    if (typeof val === "number") {
+                        data[key] = Number($(elemId).val());
+                    }
+                    else if (typeof val === "boolean") {
+                        data[key] = $(elemId).val() === "true";
+                    }
+                    else {
+                        data[ key ] = $(elemId).val();
+                    }
+                }
+            });
+        }
+
+        function PostAppData() {
+            UpdateJsonFromForm(jsonData, "");
+            Post("Config/AppData", JSON.stringify(jsonData));
+        }
+
+        function PostBootConfig() {
+            UpdateJsonFromForm(jsonData, "");
+            Post("Config/Sys/Boot", JSON.stringify(jsonData));
+        }
+
+        function PostNetworkConfig() {
+            UpdateJsonFromForm(jsonData, "");
+            Post("Config/Sys/NetIf", JSON.stringify(jsonData));
+        }
+
+        function Post(url, data) {
+            xhr = new XMLHttpRequest();
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                }
+            }
+            xhr.send(data);
+        }
+
+        BuildAppData();
+    </script>
+</body>
+</html>

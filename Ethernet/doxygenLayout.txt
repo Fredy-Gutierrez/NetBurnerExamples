@@ -1,0 +1,5 @@
+Doxygen Layout Page
+/** @pagegroup{pageExamples,Ethernet,Ethernet}
+
+This is the documentation for Ethernet functionality.
+*/

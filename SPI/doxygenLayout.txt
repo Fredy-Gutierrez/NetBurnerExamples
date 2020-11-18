@@ -1,0 +1,5 @@
+Doxygen Layout Page
+/** @pagegroup{pageExamples,SPI,SPI}
+
+This is the documentation for SPI interfaces.
+*/

@@ -1,0 +1,153 @@
+<head>
+    <script type="text/javascript" src="dygraph-combined.js"></script>
+    <script type="text/javascript">
+        var ticksReq;
+        var dataReq;
+
+        var dataSource;
+        var dataArray = [];
+        var dataGraph;
+
+        // This function parses the individual entries from the datalog response
+        // and creates an datatable to pass to the graph.
+        //
+        // Since the entries come in in time order, but without care for the id,
+        // we need to splice the table based on the ids
+        function refreshGraphs(datastring) {
+            // the data comes in as almost JSON, so parse it into a variable
+            var a = eval("(" + datastring + ")");
+            var sensorArray = [[], []];
+
+            // clear the array
+            dataArray.length = 0;
+            // split the sensor entries into individual arrays
+            sensorArray[0] = a.entries.filter(function (x, y, z) { return x.id == 1; });
+            sensorArray[1] = a.entries.filter(function (x, y, z) { return x.id == 2; });
+
+            // loop until we run out of either the first sensor entries or the second sensor entries
+            while ((sensorArray[0][0] != undefined) && (sensorArray[1][0] != undefined)) {
+                // if the lowest timestamp is only on sensor 1, only push it on the entry
+                if (sensorArray[0][0].timeStamp < sensorArray[1][0].timeStamp) {
+                    dataArray.push(
+                        [ sensorArray[0][0].timeStamp,
+                          sensorArray[0][0].value,
+                          null ]
+                    );
+                    // remove the head from sensor 1's entries
+                    sensorArray[0].shift();
+                }
+                // ...likewise if its only sensor 2
+                else if (sensorArray[0][0].timeStamp > sensorArray[1][0].timeStamp) {
+                    dataArray.push(
+                        [ sensorArray[1][0].timeStamp,
+                          null,
+                          sensorArray[1][0].value ]
+                    );
+                    // remove the head from sensor 2's entries
+                    sensorArray[1].shift();
+                }
+                // ... but if they both have the lowest, push them both on the entry
+                else {
+                    dataArray.push(
+                        [ sensorArray[0][0].timeStamp,
+                          sensorArray[0][0].value,
+                          sensorArray[1][0].value ]
+                    );
+                    // and remove the head from both arrays
+                    sensorArray[0].shift();
+                    sensorArray[1].shift();
+                }
+            }
+            // We don't know which one we ran out of...
+            while (sensorArray[0][0] != undefined) {
+                dataArray.push(
+                    [ sensorArray[0][0].timeStamp,
+                      sensorArray[0][0].value,
+                      null ]
+                );
+                sensorArray[0].shift();
+            }
+            while (sensorArray[1][0] != undefined) {
+                dataArray.push(
+                    [ sensorArray[1][0].timeStamp,
+                      null,
+                      sensorArray[1][0].value ]
+                );
+                sensorArray[1].shift();
+            }
+
+            // Make sure we have a graph, and then update its data
+            if (dataGraph != undefined) {
+                dataGraph.updateOptions({ 'file': dataArray });
+            }
+        }
+
+        // Instruct Javascript to run the processPage function every 20 milliseconds
+        window.onload = function () {
+            setInterval(function () { processPage('ticks.html', ticksReq, getTicks, true) }, 200)
+            setInterval(function () { processPage('data.html', dataReq, getData, true) }, 1000)
+            processPage('data.html', dataReq, getData, false);
+
+            // Create the graph to deplay the data
+            dataGraph = new Dygraph(
+                document.getElementById("graphdiv"),
+                dataArray,
+                {
+                    labels: ["Timestamp", "Sensor1", "Sensor2"],
+                    labelsSeperateLines: true,
+                    legend: 'always',
+                    title: 'A basic AJAX graph',
+                    xlabel: 'TimeTick',
+                    ylabel: 'Sensor Value'
+                }
+            );
+        }
+
+        function processPage(url, req, fn, async) {
+            // Most browser support
+            if (window.XMLHttpRequest) {
+                req = new XMLHttpRequest();
+            }
+            // IE5, IE6 support
+            else if (window.ActiveXObject) {
+                req = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            if (req != null) {
+                req.onreadystatechange = function () { fn(req); };
+                req.open("GET", url, async);
+                req.send(null);
+            }
+            else {
+                alert("Browser not supported");
+            }
+        }
+
+        function getData(req) {
+            if (req.readyState == 4) { // Complete
+                if (req.status == 200) { // OK response
+                    dataSource = req.responseText;
+                    refreshGraphs(dataSource);
+                }
+            }
+
+        }
+
+        function getTicks(req) {
+            if (req.readyState == 4) { // Complete
+                if (req.status == 200) { // OK response
+                    document.getElementById("TICK").innerHTML = req.responseText;
+                }
+            }
+        }
+    </script>
+</head>
+<HTML>
+<BODY>
+    <div id="ticksdiv">
+        The NetBurner has been up for <span id="TICK"></span> ticks.
+    </div>
+    <div id="graphdiv"></div>
+    <script type="text/javascript">
+    </script>
+</BODY>
+</HTML>

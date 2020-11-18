@@ -1,0 +1,5 @@
+Doxygen Layout Page
+/** @pagegroup{pageExamples,Web,Web}
+
+This is the documentation for Web functionality.
+*/

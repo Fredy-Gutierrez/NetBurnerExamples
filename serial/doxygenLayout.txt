@@ -1,0 +1,5 @@
+Doxygen Layout Page
+/** @pagegroup{pageExamples,pageExamples-serial,serial}
+
+This is the documentation for serial functionality.
+*/

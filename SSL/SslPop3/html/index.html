@@ -1,0 +1,73 @@
+ <HTML>
+ <HEAD>
+ <TITLE>SSL POP3 Mail Example</TITLE>
+ </HEAD>
+ <BODY>
+ <table width="655" border="0" cellspacing="0" cellpadding="0" height="121">
+  <tr>
+    <td width="200"><a href="http://www.netburner.com"><img src="images/logo.jpg" width="200" height="104" border="0"></a></td>
+    <td width="53"> 
+      <div align="center"><b></b></div>
+    </td>
+    <td width="402" align="right"><b><font face="Arial, Helvetica, sans-serif" size="6" color="#0000FF">
+    SSL POP3 Email Example</font></b></td>
+  </tr>
+</table>
+
+ This example program demonstrates how to get email from a SSL POP3 server.<br>
+ To run the example:<br>
+ <ul>
+ <li>Verify you have valid settings for the IP Gateway and DNS fields shown below</li>
+ <li>The default SSL port number for POP3 mail servers is 995</li>
+ <li>To enable DHCP, set the IP address field is 0.0.0.0 using IPSetup</li>
+ <li>Once all the data has been entered, click on the "Get Mail" button</li>
+ </ul>
+<br><br>
+
+  IP Mode: <!--FUNCTIONCALL WebDisplayDhcpSelect --><br>
+  Device Name: <!--FUNCTIONCALL WebShowDeviceName --> <br><br>
+  <table border=1 cellpadding="4" cellspacing="4">
+     <tr>
+        <td>
+           <br>
+           IP Address<br>
+           Network Mask<br>
+           Gateway<br>
+           DNS Server<br>
+        </td>
+
+        <td align="center">
+           <b>Active Settings</b><br>
+           <input name="DeviceDhcpAddress" <!--FUNCTIONCALL WebShowDhcpDeviceIpAddress --> type="text" size="20" readonly><br>
+           <input name="DeviceDhcpMask" <!--FUNCTIONCALL WebShowDhcpDeviceIpMask --> type="text" size="20" readonly></br>
+           <input name="DeviceDhcpGate" <!--FUNCTIONCALL WebShowDhcpDeviceGateway --> type="text" size="20" readonly></br>
+           <input name="DeviceDhcpDns" <!--FUNCTIONCALL WebShowDhcpDeviceDnsServer --> type="text" size="20" readonly></br>
+        </td>
+
+        <td valign="top">
+           <b>Static Settings</b><br>
+           <input name="DeviceAddress" <!--FUNCTIONCALL WebShowStaticDeviceIpAddress --> type="text" size="20" readonly><br>
+           <input name="DeviceMask" <!--FUNCTIONCALL WebShowStaticDeviceIpMask --> type="text" size="20" readonly></br>
+           <input name="DeviceGate" <!--FUNCTIONCALL WebShowStaticDeviceGateway --> type="text" size="20" readonly></br>
+           <input name="DeviceDns" <!--FUNCTIONCALL WebShowStaticDeviceDnsServer --> type="text" size="20" readonly></br>
+        </td>
+     </tr>
+  </table>
+  <br>
+
+ <FORM ACTION="getmail.html" METHOD=POST>
+ <B>POP3 Server Settings:</B><BR>
+ <TABLE>
+  <TR><TD> Mail Username:</TD><TD><INPUT TYPE="text" NAME="user" VALUE="<!--FUNCTIONCALL WebShowUserValue -->"  SIZE=30></TD></TR>
+  <TR><TD> Mail Password:</TD><TD><INPUT TYPE="password" NAME="pass" VALUE="<!--FUNCTIONCALL WebShowUserPass -->"  SIZE=30></TD></TR>
+  <TR><TD> POP3 Server:</TD><TD><INPUT TYPE="text" NAME="svrip" VALUE="<!--FUNCTIONCALL WebShowServer -->"  SIZE=30></TD></TR> 
+  <TR><TD> Port Number:</TD><TD><INPUT TYPE="text" NAME="port" VALUE="995"  SIZE=4></TD></TR> 
+  <TR><TD> Number Of Messages To Retrieve: </TD><TD><INPUT TYPE="text" NAME="nummsg" VALUE="1"  SIZE=4></TD></TR> 
+ </TABLE>
+ <br><br>
+ <input type="submit" value="Get Mail">
+ <BR>
+ </FORM>
+ </BODY>
+ </HTML>
+ 

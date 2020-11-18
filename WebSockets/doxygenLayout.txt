@@ -1,0 +1,5 @@
+Doxygen Layout Page
+/** @pagegroup{pageExamples,WebSockets,WebSockets}
+
+This is the documentation for WebSockets functionality.
+*/

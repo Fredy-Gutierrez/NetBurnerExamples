@@ -1,0 +1,51 @@
+<HTML>
+<HEAD>
+    <script>
+        function setPort() {
+            entry = document.getElementById("portField");
+            if (entry.value == "") {
+                entry.value = "465";
+            }
+        }
+    </script>
+</HEAD>
+
+<BODY onload="setPort()">
+    <H1>Send Mail Example with non-EFFS Attachments</H1>
+
+    This example program demonstrates how to send email attachments from a NetBurner device
+    without using the EFFS FAT32 file system. <br>
+    To run the example:
+    <ul>
+        <li>Verify you have valid settings for the IP Gateway and DNS fields shown below</li>
+        <li>To enable DHCP, set the IP address field is 0.0.0.0 using IPSetup</li>
+        <li>Enter data into the form</li>
+        <li>This example only works with Authenticated mail servers, so you must enter a password</li>
+        <li>Text data in the "Text for Attachment" field will be attached to the email message at a .txt file</li>
+        <li>Once all the data has been entered, click on the "send mail" button</li>
+    </ul>
+
+    <FORM ACTION="sendmail.html" METHOD=POST>
+        <B>Email message data:</B> <BR>
+        <TABLE>
+            <TR><TD> Mail Username:</TD><TD><INPUT TYPE="text" NAME="user" VALUE="<!--FUNCTIONCALL WebShowUserValue -->" SIZE=30></TD></TR>
+            <TR><TD> Mail Password:</TD><TD><INPUT TYPE="password" NAME="pass" VALUE="<!--FUNCTIONCALL WebShowUserPass -->" SIZE=30></TD></TR>
+            <TR><TD> SMTP Server:</TD><TD><INPUT TYPE="text" NAME="svrip" VALUE="<!--FUNCTIONCALL WebShowServer -->" SIZE=30></TD></TR>
+            <TR><TD> SMTP Port:</TD><TD><INPUT TYPE="number" NAME="svrport" id="portField" VALUE="<!--FUNCTIONCALL WebShowServerPort -->" SIZE=30></TD></TR>
+            <TR><TD> From Address:</TD><TD><INPUT TYPE="text" NAME="from" VALUE="<!--FUNCTIONCALL WebShowFrom -->" SIZE=80></TD></TR>
+            <TR><TD> To Address:</TD><TD><INPUT TYPE="text" NAME="to" VALUE="<!--FUNCTIONCALL WebShowTo -->" SIZE=80></TD></TR>
+            <TR><TD> Subject:</TD><TD><INPUT TYPE="text" NAME="sub" VALUE="<!--FUNCTIONCALL WebShowSubject -->" SIZE=80></TD></TR>
+        </TABLE>
+        <br><br>
+        Message Body:
+        <INPUT TYPE="text" NAME="body123" VALUE="<!--FUNCTIONCALL WebShowBody -->" SIZE=80> <BR>
+        Text for Attachment (can only send text attachments):
+        <INPUT TYPE="text" NAME="attachment123" VALUE="<!--FUNCTIONCALL WebShowAttachment -->" SIZE=80> <BR>
+        <br><br>
+        <input type="submit" value="Send Mail">
+        <BR>
+    </FORM>
+</BODY>
+</HTML>
+
+

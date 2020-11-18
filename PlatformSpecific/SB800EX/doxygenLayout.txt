@@ -1,0 +1,5 @@
+Doxygen Layout Page
+/** @pagegroup{platformSpecific, platformSB800EX, SB800EX}
+
+SB800EX Platform Examples
+*/

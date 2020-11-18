@@ -1,0 +1,23 @@
+<html>
+<body>
+<h1>HTML Variable Example</h1>
+This example program uses the CPPCALL and VARIABLE tags to create dynamic content<br><br><br>
+
+<h2>VARIABLE Tag</h2>
+Number of seconds since system boot: <!--VARIABLE TimeTick/TICKS_PER_SECOND --><br>
+The tag is: <pre> &lt;!--VARIABLE TimeTick/TICKS_PER_SECOND --&gt; </pre>
+Application integer value: <!--VARIABLE gIntVal --><br>
+Application string value: <!--VARIABLE gStrVal --><br>
+
+
+<h2>Function Call with CPPCALL Tag</h2>
+The CPPCALL tag passes the socket file descriptor and URL to a function in your application:<br>
+<!--CPPCALL Foo --><br>
+The tag is: <pre> &lt;!--CPPCALL Foo --&gt; </pre>
+
+<h2>Function Call with Parameters Using the VARIABLE Tag</h2>
+The VARIABLE tag can be used to call a function with a parameter.<br>
+Number of time ticks since system boot: <!--VARIABLE FooWithParameters(fd, gIntVal) --><br>
+The tag is: <pre> &lt;!--VARIABLE FooWithParameters( fd, gIntVal ) --&gt; </pre>
+</body>
+</html>

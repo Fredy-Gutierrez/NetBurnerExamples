@@ -1,0 +1,166 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script type="text/javascript">
+var ws;
+var divCount = 0;
+var HostIP = "<!--VARIABLE IPCAST(GetSocketLocalAddr(fd)) -->";
+var MAX_CONSOLE_LEN = 2000;
+
+function MakeDataSocket(resource, query)
+{
+  if ("WebSocket" in window)
+  {
+    if ((ws==null) || (ws.readyState==WebSocket.CLOSED)) {
+      // Let us open a web socket
+      ws = new WebSocket("ws://"+HostIP+"/"+resource+"?"+query);
+      ws.onopen = function()
+      {
+      };
+      ws.onmessage = function (evt)
+      {
+        var received_msg = evt.data;
+        var currNode;
+        var console = document.getElementById("console");
+        received_msg.replace("\r", "");
+        var autoScroll = (console.scrollTop == (console.scrollHeight - console.clientHeight));
+        var dataLen = received_msg.length;
+        var consoleLen = console.value.length;
+        // The following clause is to prevent browsers from crashing the page...
+        if ((consoleLen + dataLen) > MAX_CONSOLE_LEN) {
+            var delta = consoleLen + dataLen - MAX_CONSOLE_LEN;
+            console.value = console.value.substring(delta, consoleLen);
+        }
+        console.value += received_msg;
+        if (autoScroll) {
+          console.scrollTop = console.scrollHeight - console.clientHeight;
+        }
+      };
+      ws.onclose = function()
+      {
+        // websocket is closed.
+      };
+    }
+  }
+  else
+  {
+    // The browser doesn't support WebSocket
+    alert("WebSocket NOT supported by your Browser!");
+  }
+}
+
+function closeWebSocket()
+{
+  if (ws) {
+    ws.close();
+  }
+}
+
+function clearLog()
+{
+  var console = document.getElementById("console");
+  console.value = "";
+}
+
+function sendText()
+{
+  var input = document.getElementById("inputfield");
+  var data = input.value;
+  ws.send(data);
+  input.value = "";
+}
+
+function MakeConnection()
+{
+  var doc = document;
+  var chan = doc.getElementById("channel").value;
+  if (chan=="stdio") {
+    MakeDataSocket('stdio');
+  }
+  else {
+    var baud = doc.getElementById("baudrate").value;
+    var data_bits = doc.getElementById("data_bits").value;
+    var parity = doc.getElementById("parity").value;
+    var stop_bits = doc.getElementById("stop_bits").value;
+    var query = "";
+    query += "uart="+chan;
+    query += "&baud="+baud;
+    query += "&data_bits="+data_bits;
+    query += "&parity="+parity;
+    query += "&stop_bits="+stop_bits;
+    MakeDataSocket('uart', query);
+  }
+}
+
+window.onload = function() { MakeDataSocket("stdio"); };
+</script>
+</head>
+<body>
+<div id="sse">
+   <a href="javascript:MakeDataSocket('stdio')">Run WebSocket</a>
+   <a href="javascript:closeWebSocket()">Close WebSocket</a>
+   <a href="javascript:clearLog()">Clear Log</a>
+</div>
+<div id="DIV_consolesettings">
+  <form id="consoleSettings">
+    <label for="channel">Channel:</label>
+    <select id="channel" name="channel">
+      <option value="stdio">stdio</option>
+      <option value="0">UART 0</option>
+      <option value="1">UART 1</option>
+      <option value="2">UART 3</option>
+      <option value="3">UART 3</option>
+      <option value="4">UART 4</option>
+      <option value="5">UART 5</option>
+      <option value="6">UART 6</option>
+    </select>
+    <label for="baudrate">Baudrate:</label>
+    <select id="baudrate" name="baudrate">
+      <option value="230400">230400</option>
+      <option value="115200" selected>115200</option>
+      <option value="57600">57600</option>
+      <option value="38400">38400</option>
+      <option value="19200">19200</option>
+      <option value="9600">9600</option>
+      <option value="4800">4800</option>
+      <option value="3600">3600</option>
+      <option value="2400">2400</option>
+      <option value="1800">1800</option>
+      <option value="1200">1200</option>
+      <option value="600">600</option>
+      <option value="300">300</option>
+    </select>
+    <label for="data_bits">Data Bits:</label>
+    <select id="data_bits" name="data_bits">
+      <option value="8">8</option>
+      <option value="7">7</option>
+      <option value="6">6</option>
+      <option value="5">5</option>
+    </select>
+    <label for="parity">Parity Bits:</label>
+    <select id="parity" name="parity">
+      <option value="0">none</option>
+      <option value="1">odd</option>
+      <option value="2">even</option>
+    </select>
+    <label for="stop_bits">Stop Bits:</label>
+    <select id="stop_bits" name="stop_bits">
+      <option value="1">1</option>
+      <option value="2">1.5</option>
+      <option value="3">2</option>
+    </select>
+    <input type="button" onclick="javascript:MakeConnection()" value="Connect">
+  </form>
+</div>
+<div id="DIV_Term">
+    <textarea name="console" id="console" rows="30" cols="100" disabled></textarea>
+</div>
+<div>
+    <form id="IN" action="javascript:sendText()">
+        <textarea name="inputfield" id="inputfield" rows="5" cols="100"></textarea>
+        <input type="button" onclick="javascript:sendText()" value="Send">
+        </input>
+    </form>
+</div>
+</body>
+</html>

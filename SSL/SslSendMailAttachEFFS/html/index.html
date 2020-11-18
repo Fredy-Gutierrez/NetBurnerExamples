@@ -1,0 +1,71 @@
+<HTML>
+<HEAD>
+    <script>
+        function setPort() {
+            entry = document.getElementById("portField");
+            if (entry.value == "") {
+                entry.value = "465";
+            }
+        }
+    </script>
+</HEAD>
+
+<BODY onload="setPort()">
+    <H1>Send Mail With EFFS Attachment Example Application</H1>
+    This example program demonstrates how to send a EFFS FAT32 email
+    attachment from a NetBurner device.
+    To run the example:
+    <ul>
+        <li>Verify you have valid settings for the IP Gateway and DNS fields shown below.
+        <li>To enable DHCP, set the IP address field is 0.0.0.0 using IPSetup.
+        <li>
+            Enter data into the form. SMTP authentication will be used for all email messages,
+            and a password must be provided.
+        <li>
+            If you enter text (256 chars max) in the Create Text Attachment field a text file <br>
+            attachment, TextFile.txt, will be created.
+        <li>
+            If you specify a file name in the SD file name field, the file must exist on <br>
+            the SD card.
+        <li>
+            This application supports FTP. We recommend that you use an FTP client to view and <br>
+            modify the files on the SD card.
+        <li> Once all the data has been entered, click on the "send mail" button.
+        <li>
+            When trying to connect to a Google Account, you will likely need to enable less secure <br>
+            application access.  If you use two-factor authentication with your account, you will <br>
+            need to setup an application password for the account being connected to. This can be done at <br>
+            the following URL: <a href="https://myaccount.google.com/apppasswords">https://myaccount.google.com/apppasswords</a>
+    </ul>
+
+    <FORM ACTION="sendmail.html" METHOD=POST>
+        <B>Email message data:</B><BR>
+        <TABLE>
+            <TR><TD> Mail Username:</TD><TD><INPUT TYPE="text" NAME="user" VALUE="<!--FUNCTIONCALL WebShowUserValue -->" SIZE=30></TD></TR>
+            <TR><TD> Mail Password:</TD><TD><INPUT TYPE="password" NAME="pass" VALUE="<!--FUNCTIONCALL WebShowUserPass -->" SIZE=30></TD></TR>
+            <TR><TD> SMTP Server:</TD><TD><INPUT TYPE="text" NAME="svrip" VALUE="<!--FUNCTIONCALL WebShowServer -->" SIZE=30></TD></TR>
+            <TR><TD> SMTP Port:</TD><TD><INPUT TYPE="number" NAME="svrport" id="portField" VALUE="<!--FUNCTIONCALL WebShowServerPort -->" SIZE=30></TD></TR>
+            <TR><TD> From Address:</TD><TD><INPUT TYPE="text" NAME="from" VALUE="<!--FUNCTIONCALL WebShowFrom -->" SIZE=80></TD></TR>
+            <TR><TD> To Address:</TD><TD><INPUT TYPE="text" NAME="to" VALUE="<!--FUNCTIONCALL WebShowTo -->" SIZE=80></TD></TR>
+            <TR><TD> Subject:</TD><TD><INPUT TYPE="text" NAME="sub" VALUE="<!--FUNCTIONCALL WebShowSubject -->" SIZE=80></TD></TR>
+            <TR><TD> Message Body:</TD><TD><INPUT TYPE="text" NAME="body123" VALUE="<!--FUNCTIONCALL WebShowBody -->" SIZE=80></TD></TR>
+        </TABLE>
+        <br><br>
+
+        <TABLE>
+            <TR>
+                <TD>Enter text to create text attachment:</TD>
+                <TD><INPUT TYPE="text" NAME="create_text_attach" VALUE="<!--FUNCTIONCALL WebShowCreateTextAttachment -->" SIZE=80></TD>
+            </TR>
+            <TR>
+                <TD>SD Card file name to attach:</TD>
+                <TD><INPUT TYPE="text" NAME="attach_sd_filename" VALUE="<!--FUNCTIONCALL WebShowAttachSDFile -->" SIZE=80> </TD>
+            </TR>
+        </TABLE>
+        <br><br>
+        <input type="submit" value="Send Mail">
+        <BR>
+    </FORM>
+</BODY>
+</HTML>
+

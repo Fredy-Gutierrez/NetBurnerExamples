@@ -1,0 +1,554 @@
+﻿<html>
+<head>
+    <meta charset="utf-8">
+    <title>Basic Config System Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS - Custom styling to make things look a bit nicer -->
+    <style>
+        .wrapperRoot {
+            display: grid;
+            grid-template-columns: 560px;
+        }
+
+        .wrapper {
+            display: grid;
+            grid-gap: 3px;
+        }
+
+        .box1 {
+            background-color: #af0309;
+            color: #fff;
+            border-radius: 5px;
+            padding-left: 5px;
+        }
+
+        .box2 {
+            background-color: #595454;
+            color: #fff;
+            border-radius: 5px;
+            padding-left: 5px;
+        }
+
+        .formRow {
+            display: table-row;
+        }
+
+        .formCell {
+            display: table-cell;
+            width: 175px;
+            height: 1.75em;
+            vertical-align: middle;
+        }
+
+        .arrow-side {
+            width: 0;
+            height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 7px solid white;
+            margin-top: 6px;
+            float: left;
+        }
+
+        .arrow-down {
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 7px solid white;
+            margin-top: 8px;
+            float: left;
+        }
+
+        .text-headers {
+            font-size: 1.25em;
+            font-weight: bold;
+            margin-left: 30px;
+        }
+
+        .img-pos {
+            width: 0px;
+            float: left;
+            left: 590px;
+            position: fixed;
+            top: 5px;
+        }
+
+        .text-pos {
+            width: 325px;
+            float: left;
+            left: 765px;
+            top: 165px;
+            position: fixed;
+            display: block;
+            font-weight: bold;
+        }
+
+        .button-pos {
+            width: 130px;
+            float: left;
+            left: 625px;
+            top: 125px;
+            position: fixed;
+            display: block;
+        }
+
+        .button-style {
+            border-radius: 5px;
+            width: 125px;
+            height: 40px;
+            color: #fff;
+            background-color: #595454;
+            margin: 2px;
+        }
+
+        .readonly {
+            border: none;
+            overflow: visible;
+            width: 250px;
+        }
+
+        select:focus,
+        textarea:focus,
+        input:focus {
+            outline: none;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            background-color: #222;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 7px;
+            position: absolute;
+            display: none;
+            font-size: .85em;
+            margin-left: 5px;
+            max-width: 200px;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <!-- This is where our dynamically built form will live -->
+    <span id="configContent"></span>
+    <span class="img-pos">
+        <img src="logo.gif" alt="NB Logo" />
+    </span>
+    <span class="button-pos">
+        <input type="button" onclick="SetVis(true)" class="button-style" value="Exapand All">
+        <input type="button" onclick="SetVis(false)" class="button-style" value="Collapse All">
+        <input type="button" onclick="PostConfigData()" class="button-style" style="background-color: #af0309;" value="Update Record">
+        <a href="http://discover.netburner.com" style="text-decoration: none;"><input type="button" class="button-style" style="margin-top: 20px;" value="NB Discover"></a>
+    </span>
+    <span class="text-pos" id="resetDevice" style="visibility: hidden;">
+        Some changes made require a device reboot to take effect. Please check "Reboot" to do so during the next record update.
+    </span>
+
+    <!-- JavaScript - Placed at the end of the document so the pages load faster -->
+    <script type="text/javascript">
+        var jsonData;  /* This holds the main body of our JSON data */
+        var jsonSchema; /* This holds the schema that defines the properties of the JSON data */
+        var keyStack = []; /* Tracks the current position in the config tree so it can be used to find properties in the schema*/
+        var gridVisDict = {}; /* Holds items that have been expanded, but are currently hidden by parents */
+        var recDat = false; /* Have we recieved the config data yet */
+        var recSch = false; /* Have we recieved the schema data yet */
+
+        // Find the current location in the schema based on the keyStack
+        function FindSchemaProp() {
+            var curLoc = jsonSchema;
+            for (var j = 0; j < keyStack.length; j++) {
+                curLoc = curLoc.properties;
+                curLoc = curLoc[keyStack[j]];
+                // Arrays will own the property for all elements
+                if (curLoc.hasOwnProperty('type') && curLoc.type === 'array') {
+                    break;
+                }
+            }
+            return curLoc;
+        }
+
+        // Check if a boolean property is set in the schema
+        function GetBoolProp(prop) {
+            var foundProp = FindSchemaProp();
+            return (foundProp.hasOwnProperty(prop)) && (foundProp[prop] === true);
+        }
+
+        // Check if a string property is set in the schema
+        function GetStringProp(prop) {
+            var foundProp = FindSchemaProp();
+            return foundProp.hasOwnProperty(prop) ? foundProp[prop] : "";
+        }
+
+        // Set the reboot option text to visibile
+        function RebootOptionChanged() {
+            var elem = document.getElementById("resetDevice");
+            if (elem != null) {
+                elem.style.visibility = "visible";
+            }
+        }
+
+        // Set the border bottom border radius for an element based on visiblity
+        function SetBBR(elem, vis) {
+            elem.style.borderBottomLeftRadius = vis ? "0px" : "5px";
+            elem.style.borderBottomRightRadius = vis ? "0px" : "5px";
+        }
+
+        // Set the visibility for an element
+        function SetDisp(elem, vis) {
+            elem.style.visibility = vis ? "visible" : "hidden";
+            elem.style.display = vis ? "grid" : "none";
+        }
+
+        // Set the visiblity for all of the form elements on a page
+        function SetVis(vis) {
+            var clickedId = "Config";
+            var clickElem = document.getElementById(clickedId);
+            if (clickElem != null) {
+                SetBBR(clickElem, vis);
+            }
+
+            // Change the indicator arrow
+            var arrElem = document.getElementById(clickedId + "_Arr");
+            if (arrElem != null) {
+                arrElem.className = vis ? "arrow-down" : "arrow-side";
+            }
+
+            // Find the child grid element and iterate over everything inside of it
+            var name = clickedId + "_Grid";
+            var elemList = document.getElementsByName(name);
+            for (i = 0; i < elemList.length; i++) {
+                SetDisp(elemList[i], vis);
+
+                // Set visibility
+                var elList = elemList[i].querySelectorAll('[style*="visibility"');
+                for (var j = 0; j < elList.length; j++) {
+                    SetDisp(elList[j], vis);
+                }
+
+                // Set the border radius
+                elList = elemList[i].querySelectorAll('[style*="border-bottom-right-radius"');
+                for (var j = 0; j < elList.length; j++) {
+                    SetBBR(elList[j], vis);
+                }
+
+                // Set the indicator arrows
+                var srchClass = vis ? '.arrow-side' : '.arrow-down';
+                var setClass = vis ? 'arrow-down' : 'arrow-side';
+                elList = elemList[i].querySelectorAll(srchClass);
+                for (var j = 0; j < elList.length; j++) {
+                    elList[j].className = setClass;
+                }
+            }
+
+            gridVisDict[name] = [];
+        }
+
+        // Toggle a current element's visibility based on what it current is
+        function ToggleVis(clickedId) {
+            var clickElem = document.getElementById(clickedId);
+            if (clickElem != null) {
+                var setBorder = (clickElem.style.borderBottomLeftRadius == "5px");
+                SetBBR(clickElem, setBorder);
+            }
+
+            // Set the indicator arrow
+            var arrElem = document.getElementById(clickedId + "_Arr");
+            if (arrElem != null) {
+                arrElem.className = (arrElem.className === "arrow-down") ? "arrow-side" : "arrow-down";
+            }
+
+            var name = clickedId + "_Grid";
+            var elemList = document.getElementsByName(name);
+            for (i = 0; i < elemList.length; i++) {
+                // Toggle visibility
+                var setVis = (elemList[i].style.visibility === "hidden");
+
+                SetDisp(elemList[i], setVis);
+
+                // If hiding something, also hide everything below it.
+                if (setVis === false) {
+                    gridVisDict[name] = [];
+                    var elList = elemList[i].querySelectorAll('[style*="visibility"');
+
+                    for (var j = 0; j < elList.length; j++) {
+                        // Remember who was expanded
+                        if (elList[j].style.visibility === "visible") {
+                            gridVisDict[name].push(elList[j].attributes["name"].value);
+                        }
+                        // Now hide them
+                        SetDisp(elList[j], false);
+                    }
+                }
+                else if (setVis === true) {
+                    // Expand everyone that was expanded previously
+                    if (name in gridVisDict) {
+                        for (var j = 0; j < gridVisDict[name].length; j++) {
+                            var childElem = document.getElementsByName(gridVisDict[name][j]);
+                            SetDisp(childElem[0], true);
+                        }
+                        gridVisDict[name] = [];
+                    }
+                }
+            }
+        }
+
+        // Construct and add the items for the form
+        function BuildItems(data, items, level, parentKey) {
+            var vis = (level < 2) ? 'visibile' : 'hidden';
+            var disp = (level < 2) ? 'grid' : 'none';
+            var gridClass = ((level % 2) === 0) ? 'box1' : 'box2';
+
+            // Add a wrapper element to contain all of the elements this level
+            items.push("<div class='wrapper' name='" + parentKey + "Grid' style='visibility: " + vis + "; display: " + disp + ";'>");
+
+            // Iterate over the data items and build form elements around them as needed
+            for (key in data) {
+                // Add a key to the stack so we can determine where we are
+                keyStack.push(key);
+                var idKey = parentKey + key;
+
+                // Set tooltip values, if applicable
+                var tooltip = GetStringProp('description');
+                var tooltipClass = "";
+                var tooltipUndLine = "";
+                if (tooltip != "") {
+                    tooltipUndLine = "<span style='border-bottom: 1px dotted black;'>";
+                    tooltip = "</span><span class='tooltiptext'>" + tooltip + "</span>";
+                    tooltipClass = " tooltip";
+                }
+
+                if (typeof data[key] === "object") {
+                    var isDropDown = false;
+                    var isArray = false;
+                    var choices = [];
+                    var value = "";
+
+                    for (childKey in data[key]) {
+                        // Try to identify a dropdown menu, which needs both "choices" and a "value"
+                        if (typeof childKey === "string") {
+                            var childVal = data[key][childKey];
+                            if (childKey.toUpperCase() === "CHOICES") {
+                                isDropDown = true;
+                                choices = childVal.split(",");
+                            }
+                            else if (childKey.toUpperCase() === "VALUE") {
+                                value = childVal;
+                            }
+                        }
+                        // Try to identify an array, which has a key of type number
+                        else if (typeof childKey === "number") {
+                            isArray = true;
+                        }
+                    }
+
+                    // If this is a dropdown menu, build the options
+                    if (isDropDown === true) {
+                        var bootOnChg = GetBoolProp("needreboot") ? "onchange='RebootOptionChanged()'" : "";
+                        items.push("<div><div class='formCell" + tooltipClass + "'>" + tooltipUndLine + "<label for='" + idKey + "'style='padding-left: 0px'>" + key + "</label>" + tooltip + "</div>");
+                        items.push("<div class='formCell'><select id='" + idKey + "' " + bootOnChg + ">");
+                        choices.forEach(function (element) {
+                            if (element === value) {
+                                // Add item as selected
+                                items.push("<option selected='selected'>" + element + "</option>");
+                            }
+                            else {
+                                // Add to dropdown options
+                                items.push("<option>" + element + "</option>");
+                            }
+                            // End dropdown
+                        });
+                        items.push("</select></div></div>");
+                    }
+                    // Otherwise, since we're an object, we know we're going to contain subitems, so let's build them
+                    else {
+                        var headerVal = Math.min(level + 1, 5);
+                        var buildItemsKey = isArray ? idKey + "_array" : idKey + "_";  // Array items need a special key
+                        var arrowClass = (level == 0) ? 'arrow-down' : 'arrow-side';
+                        var botBordRad = (level == 0) ? '0px' : '5px';
+                        items.push("<div class='wrapper'><div class='" + gridClass + "' id='" + idKey + "' onclick='ToggleVis(\"" + idKey + "\")' style='cursor: pointer; border-bottom-right-radius: " + botBordRad + "; border-bottom-left-radius: " + botBordRad + ";'><div class='" + arrowClass + "' id='" + idKey + "_Arr'></div><div class='text-headers'>" + key + "</div></div><div style='padding-left: 15px;'>");
+                        BuildItems(data[key], items, level + 1, buildItemsKey);
+                        items.push("</div></div>");
+                    }
+                }
+                else {
+                    // If we're dealing with a simple key/value pair, build the input
+                    var readOnly = GetBoolProp("readOnly") ? "readonly" : "";
+                    var bootOnChg = GetBoolProp("rebootRequired") ? "onchange='RebootOptionChanged()'" : "";
+                    var inputType = "text";
+                    var checked = "";
+                    if (typeof data[key] === "boolean") {
+                        inputType = "checkbox";
+                        checked = (data[key] === true) ? "checked" : "";
+                    }
+                    else if (GetStringProp("format") === "password") {
+                        inputType = "password";
+                    }
+                    var gridClass = ((level % 2) === 0) ? "box1" : "box2";
+                    items.push("<div class='formRow'><div class='formCell" + tooltipClass + "'>" + tooltipUndLine + "<label for='" + idKey + "'>" + key + "</label>" + tooltip + "</div>");
+
+                    items.push("<div class='formCell'><input class='" + readOnly + "' id='" + idKey + "' type='" + inputType + "' value='" + data[key] + "' " + readOnly + " " + bootOnChg + " " + checked + "></div></div>");
+                }
+
+                // Remove the key from the stack
+                keyStack.pop();
+            }
+            items.push("</div>");
+        }
+
+        // Request the JSON data and schema information from the server, and initiate the form building process
+        function RequestJsonData(url) {
+            xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    if (url === "Config") {
+                        jsonData = JSON.parse(this.responseText);
+                        recDat = true;
+                    }
+                    else if (url === "Schema") {
+                        jsonSchema = JSON.parse(this.responseText);
+                        recSch = true;
+                    }
+
+                    // If we have recieved the data and the schema, build the form
+                    if (recDat && recSch) {
+                        BuildForm();
+                    }
+                }
+            };
+            xmlhttp.open("GET", url, true);
+            xmlhttp.send();
+        }
+
+        // Build the form here.
+        function BuildForm() {
+            var items = [];
+            keyStack = [];
+            items.push("<div class='wrapperRoot' id='tableRoot'>");
+            BuildItems(jsonData, items, 0, "");
+            items.push("</div>");
+
+            var builtHtml = "";
+            items.forEach(function (element) {
+                builtHtml += element;
+            });
+            document.getElementById("configContent").innerHTML = builtHtml;
+
+            adjustForMobile();
+        }
+
+        // Take the form data, use it to update the JSON data we saved, and send it back to the server
+        function UpdateJsonFromForm(data, parentKey) {
+            for (key in data) {
+                var elemId = parentKey + key;
+                var elem = document.getElementById(elemId);
+                var val = data[key];
+
+                // Objects still need special handling
+                if (typeof val === 'object') {
+                    var isDropDown = false; // Are we trying to save a dropdown with choices?
+                    var isArray = false;    // Or are we trying to save a key/value pair where the value is an array
+
+                    // If the value is an object, figure out what kind it is
+                    for (childKey in data[key]) {
+                        // Try to identify a dropdown menu, which needs both "choices" and a "value"
+                        if (typeof childKey === "string") {
+                            if (childKey.toUpperCase() === "CHOICES") {
+                                isDropDown = true;
+                            }
+                            if (childKey.toUpperCase() === "VALUE") {
+                                if (elem != null) {
+                                    val[childKey] = elem.value;
+                                }
+                            }
+                        }
+                        // Identify an array, whose id will be based on the parent's key
+                        else if (typeof childKey === "number") {
+                            isArray = true;
+                        }
+                    }
+
+                    // If we're not simply dealing with a dropdown, descend into the sub-objects
+                    if (!isDropDown) {
+                        var updateKey = isArray ? elemId + "_array" : elemId + "_";  // Handle the special key for arrays
+                        UpdateJsonFromForm(val, updateKey);
+                    }
+                }
+                else if (elem != null) {
+                    // If it's just a key value pair, figure out what data type it should be, and set it
+                    if (typeof val === "number") {
+                        data[key] = Number(elem.value);
+                    }
+                    else if (typeof val === "boolean") {
+                        data[key] = elem.checked === true;
+                    }
+                    else {
+                        data[key] = elem.value;
+                    }
+                }
+            }
+        }
+
+        // Post our config data back to the server
+        function PostConfigData() {
+            UpdateJsonFromForm(jsonData, "");
+            Post("Config", JSON.stringify(jsonData));
+        }
+
+        // Create the POST request and sent it
+        function Post(url, data) {
+            xhr = new XMLHttpRequest();
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    RequestJsonData("Config");
+                }
+            }
+            xhr.send(data);
+        }
+
+        // If we are a mobile device, go ahead and make some sytle adjustments
+        function adjustForMobile() {
+            if (detectMobile()) {
+                var elem = document.querySelectorAll('.img-pos');
+                for (var i = 0; i < elem.length; i++) {
+                    elem[i].style.width = "205px";
+                    elem[i].style.position = "inherit";
+                }
+
+                elem = document.querySelectorAll('.button-pos');
+                for (var i = 0; i < elem.length; i++) {
+                    elem[i].style.width = "125px";
+                    elem[i].style.position = "inherit";
+                }
+
+                elem = document.querySelectorAll('.text-pos');
+                for (var i = 0; i < elem.length; i++) {
+                    elem[i].style.position = "inherit";
+                }
+            }
+        }
+
+        // Determine if we are running from a mobile device
+        function detectMobile() {
+            return (navigator.userAgent.match(/Android/i)
+                || navigator.userAgent.match(/webOS/i)
+                || navigator.userAgent.match(/iPhone/i)
+                || navigator.userAgent.match(/iPad/i)
+                || navigator.userAgent.match(/iPod/i)
+                || navigator.userAgent.match(/BlackBerry/i)
+                || navigator.userAgent.match(/Windows Phone/i));
+        }
+
+        RequestJsonData("Config");
+        RequestJsonData("Schema");
+    </script>
+</body>
+</html>

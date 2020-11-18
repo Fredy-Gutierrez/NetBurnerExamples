@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<title>NetBurner SSH Keys</title>
+	</head>
+	<body>
+   		<img src="logo.jpg" alt="NetBurner Logo" width="200" height="93"><br><br>
+		<form action="KEYPOST.HTM" enctype="multipart/form-data" method=POST>
+		  <table width="762" border="0" cellspacing="0" cellpadding="3">
+			<tr>
+				<td colspan="2">
+					<table width="762" border="1" bgcolor="#e8e8e8" cellpadding="5" cellspacing="0" rules="none">
+						<tr>
+							<td colspan="7" bgcolor="#2f4f4f"><font size="3" color="#ffffff">
+								<b>SSH Keys</b></font> 
+							</td>
+						</tr>
+						<td>&nbsp;</td>
+						<tr>
+							<td><font size="2">RSA Public/Private Key Pair</font></td>
+							<td colspan="3"><!--FUNCTIONCALL DisplayRSAKeyInstalled --></td>
+							<td colspan="3">
+								<A HREF="RSAKEY.HTM">
+								<font size="2">
+									Display Public Key
+								</font>
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<td><font size="2">DSA Public/Private Key Pair</font></td>
+							<td colspan="3"><!--FUNCTIONCALL DisplayDSAKeyInstalled --></td>
+							<td colspan="3">
+								<A HREF="DSAKEY.HTM">
+								<font size="2">
+									Display Public Key
+								</font>
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<td><font size="2">RSA or DSA Key File to Install</font></td>
+							<td colspan="7">
+								<INPUT NAME="keysFile" TYPE="file">
+								<!--FUNCTIONCALL DisplayKeyFileSelectionStatus -->
+								<BR>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="7" align="right">
+								<hr>
+								<input type="submit" value="Install Key">                  
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+		</form>
+		
+		<form action="KEYRESET.HTM" method=POST>
+  		<table width="762" border="1" bgcolor="#e8e8e8" cellspacing="0" cellpadding="3">
+  		<tr> </tr>
+		<tr>
+		<td align="center"><input type="submit" value="Reset Keys"></td>
+		</tr>  
+		</table>                
+		</form>
+		
+		
+		<br>
+		<br><b><font color="red">
+		SSH Keys - Key size must be at least 512 and no more than 4096 and in openSSH(openSSL) format.
+		</b></font><br>
+	</body>
+</html>
+ 

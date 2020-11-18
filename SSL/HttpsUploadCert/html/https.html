@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<title>NetBurner HTTPS</title>
+	</head>
+	<body>
+		<!--FUNCTIONCALL DisplayHeader -->
+	<form action="HTTPSPOST.HTML" enctype="multipart/form-data" method=POST>
+		<table id="outerTable" width="762" border="0" cellspacing="0" cellpadding="3">
+			<tr>
+				<td colspan="2">
+					<table id="settingsTable" align="left" width="762" border="1" bgcolor="#e8e8e8" cellpadding="5" cellspacing="0" rules="none">
+						<tr>
+							<td colspan="7" bgcolor="#2f4f4f"><font size="3" color="#ffffff"><b>HTTPS</b></font></td>
+						</tr>
+						<tr>
+							<td colspan="7">&nbsp;</td>
+						</tr>
+						<tr>
+							<td><font size="2">SSL Public Key Certificate</font></td>
+							<td colspan="6"><!--FUNCTIONCALL DisplayCertificateInstalled --></td>
+						</tr>
+						<tr>
+							<td><font size="2">HTTPS Public/Private Key Pair</font></td>
+							<td colspan="3"><!--FUNCTIONCALL DisplayHttpsKeyInstalled --></td>
+							<td colspan="3"><A HREF="SSLKEY.HTML"><font size="2">Display Public Key</font></a></td>
+						</tr>
+						<tr>
+							<td><font size="2">Certificate File to Install</font></td>
+							<td colspan="6"><INPUT NAME="certificateFile" TYPE="file"><!--FUNCTIONCALL DisplayCertificateFileSelectionStatus --><BR></td>
+						</tr>
+						<tr>
+							<td><font size="2">Key File to Install</font></td>
+							<td colspan="6"><INPUT NAME="keyFile" TYPE="file"><!--FUNCTIONCALL DisplayKeyFileSelectionStatus --><BR></td>
+						</tr>
+						<tr>
+							<td colspan="2" align="left"> <hr size="1" noshade><input name="ResetAll" type="submit" value="Reset To Factory Defaults"></td>
+							<td colspan="6" align="right"><hr size="1" noshade><input type="submit" value="Install Certificate and Key"></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</form>
+    Maximim key size is 4096<br>
+	Device Name: <!--FUNCTIONCALL DisplayDeviceName --> | Version: <!--FUNCTIONCALL DisplayFirmwareVersion -->
+	<br><br>
+    <!--FUNCTIONCALL webShowAddress -->
+	<br><br>
+</body>
+</html>
+ 

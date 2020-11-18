@@ -1,0 +1,111 @@
+ <HTML>
+ <HEAD>
+ <TITLE>NetBurner SSL/TLS Send Mail Example</TITLE>
+ <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+ <script>
+function setPort() {
+    entry = document.getElementById("portField");
+    starttls = document.getElementsByName("STARTTLS")[0].checked;
+    if (entry.value == "") {
+        if (starttls) {
+            entry.value = "25";
+        } else {
+            entry.value = "465";
+        }
+    }
+}
+function updatePort() {
+    entry = document.getElementById("portField");
+    starttls = document.getElementsByName("STARTTLS")[0].checked;
+    if (starttls) {
+        entry.value = "25";
+    } else {
+        entry.value = "465";
+    }
+}
+ </script>
+ </HEAD>
+ <BODY onload="setPort()">
+ <table width="800" border="0" cellspacing="0" cellpadding="0" height="121">
+  <tr>
+    <td width="200"><a href="http://www.netburner.com"><img src="logo.gif" width="200" height="104" border="0"></a></td>
+    <td width="53"> 
+      <div align="center"><b></b></div>
+    </td>
+    <td width="402" align="right"><b><font face="Arial, Helvetica, sans-serif" size="6" color="#0000FF">SSL/TLS Send Mail Example</font></b></td>
+  </tr>
+</table>
+  
+ This example program demonstrates how to send email from a NetBurner device to a server that uses SSL/TLS.
+ It has been tested with gmail and yahoo accounts. Please note, you CAN NOT use pop mail with 
+ free yahoo e-mail accounts. You need one of their premium services such as mailplus or bizmail.
+ Please read the info about how SSL/TLS mail transactions work in the main.cpp of this example
+ To run the example:
+ <ul>
+ <li>Verify you have valid settings for the IP Gateway and DNS fields shown below.</li>
+ <li>To enable DHCP, set the IP address field is 0.0.0.0 using IPSetup.</li>
+ <li>Enter data into the form. If you enter a value in the "Mail Password" field
+   SMTP authentication will be used, otherwise leave it blank. This application
+   can support plain text authentication.</li>
+ <li>Rarely some SSL servers require you to first connect to the regular SMTP port(25), then 
+   initialize SSL negotiation with the STARTTLS command. Unless you know for a fact the
+   smtp server you are using requires this, leave the STARTTLS checkbox unchecked.</li>
+ <li>Once all the data has been entered, click on the "send mail" button.</li>
+ </ul>
+ <br><br>
+
+  IP Mode: <!--FUNCTIONCALL WebDisplayDhcpSelect --><br>
+  Device Name: <!--FUNCTIONCALL WebShowDeviceName --> <br><br>
+  <table border=1 cellpadding="4" cellspacing="4">
+     <tr>
+        <td>
+           <br>
+           IP Address<br>
+           Network Mask<br>
+           Gateway<br>
+           DNS Server<br>
+        </td>
+
+        <td align="center">
+           <b>DHCP Assigned Settings</b><br>
+           <input name="DeviceDhcpAddress" <!--FUNCTIONCALL WebShowDhcpDeviceIpAddress --> type="text" size="20" readonly><br>
+           <input name="DeviceDhcpMask" <!--FUNCTIONCALL WebShowDhcpDeviceIpMask --> type="text" size="20" readonly></br>
+           <input name="DeviceDhcpGate" <!--FUNCTIONCALL WebShowDhcpDeviceGateway --> type="text" size="20" readonly></br>
+           <input name="DeviceDhcpDns" <!--FUNCTIONCALL WebShowDhcpDeviceDnsServer --> type="text" size="20" readonly></br>
+        </td>
+
+        <td valign="top">
+           <b>Static Settings</b><br>
+           <input name="DeviceAddress" <!--FUNCTIONCALL WebShowStaticDeviceIpAddress --> type="text" size="20" readonly><br>
+           <input name="DeviceMask" <!--FUNCTIONCALL WebShowStaticDeviceIpMask --> type="text" size="20" readonly></br>
+           <input name="DeviceGate" <!--FUNCTIONCALL WebShowStaticDeviceGateway --> type="text" size="20" readonly></br>
+           <input name="DeviceDns" <!--FUNCTIONCALL WebShowStaticDeviceDnsServer --> type="text" size="20" readonly></br>
+        </td>
+     </tr>
+  </table>
+  <br>
+
+ <FORM ACTION="sendmail.html" METHOD=POST>
+ <B>Email message data:</B><BR>
+ <TABLE>
+  <TR><TD> Mail Username:</TD><TD><INPUT TYPE="text" NAME="user" VALUE="<!--FUNCTIONCALL WebShowUserValue -->"  SIZE=30></TD></TR>
+  <TR><TD> Mail Password:</TD><TD><INPUT TYPE="password" NAME="pass" VALUE="<!--FUNCTIONCALL WebShowUserPass -->"  SIZE=30></TD></TR>
+  <TR><TD> SMTP Server:</TD><TD><INPUT TYPE="text" NAME="svrip" VALUE="<!--FUNCTIONCALL WebShowServer -->"  SIZE=30>
+  &nbsp &nbsp Use STARTTLS? <INPUT TYPE="Checkbox" name="STARTTLS" value="TRUE" onclick="updatePort()"> (leave unchecked if not sure) </TD></TR> 
+  <TR><TD> SMTP Port:</TD><TD><INPUT TYPE="number" NAME="svrport" id="portField" VALUE="<!--FUNCTIONCALL WebShowServerPort -->"  SIZE=30></TD></TR>
+  <TR><TD> From Address:</TD><TD><INPUT TYPE="text" NAME="from" VALUE="<!--FUNCTIONCALL WebShowFrom -->"  SIZE=80></TD></TR> 
+  <TR><TD> To Address:</TD><TD><INPUT TYPE="text" NAME="to" VALUE="<!--FUNCTIONCALL WebShowTo -->"  SIZE=80></TD></TR> 
+  <TR><TD> Subject:</TD><TD><INPUT TYPE="text" NAME="sub" VALUE="<!--FUNCTIONCALL WebShowSubject -->"  SIZE=80></TD></TR> 
+ </TABLE>
+ <br><br>
+ Message Body:<br>
+ <TEXTAREA NAME="body" ROWS=6 COLS=60></TEXTAREA>
+
+ <!-- <INPUT TYPE="text" NAME="body" height="200" VALUE="<!--//FUNCTIONCALL WebShowBody ->"  SIZE=80--> <BR>
+ <br><br> 
+ <input type="submit" value="Send Mail">
+ <BR>
+ </FORM>
+ </BODY>
+ </HTML>
+ 

@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<title>SSL Application Help</title>
+	</head>
+	<body>
+		<!--FUNCTIONCALL DisplayHeader -->  
+    <h1><font face="Arial, Helvetica, sans-serif"><a name="HTTPSConfig" id="HTTPSConfig"></a>Hypertext Transfer Protocol over SSL (HTTPS)&nbsp; Configuration </font></h1>
+    <table width="829" border="0">
+      <tr>
+        <td><p>HTTPS refers to HTTP over a secure SSL connection. To use  HTTPS you can simply enter a URL of &ldquo;https://xxxxx&rdquo; instead of  &ldquo;http://xxxxxx&rdquo;.&nbsp; Your NetBurner device  can simultaneously run both HTTP and HTTPS access to the web server. HTTPS requires both a Certificate and a RSA public/private  Key. The key must match the certificate and if you are creating your own self  signed certificate or purchasing a certificate from a certificate authority,  both the certificate and key must be uploaded at the same time. If you are  creating your own certificate, called a self-signed certificate, anyone  accessing the secure web page will first receive a warning message from the web  browser asking to confirm whether or not the certificate should be accepted. For  detailed information on the NetBurner SSL implementation, please refer to the  NetBurner SSL product datasheet at www.netburner.com.There are 3 possible key/certificate configurations. The  first two are present so the system is functional if you have not uploaded your  own user created certificate and key.</p>
+          <ol start="1" type="1">
+            <li>The       NetBurner certificate/key built into the SSL library, designated by the       name &ldquo;NetBurner&rdquo;, which will be used if no other keys are present. </li>
+            <li>The       application certificate/key, designated by the description &ldquo;Default&rdquo;. This       SSL certificate and key are compiled into the application and will be used       if no user created certificate and key have been uploaded.</li>
+            <li>A certificate       and key you have uploaded.</li>
+          </ol>
+        <strong>Maximum key size is 4096 bits</strong> </td>
+      </tr>
+    </table>
+    <br />
+    <table border="1" cellspacing="0" cellpadding="4">
+          <tr>
+            <td width="264" valign="top">SSL Public Key Certificate</td>
+            <td width="540" valign="top">Displays current certificate in use.</td>
+      </tr>
+          <tr>
+            <td width="264" valign="top">RSA Public/Private Key Pair</td>
+            <td width="540" valign="top">Displays the current keys in use.</td>
+      </tr>
+          <tr>
+            <td width="264" valign="top">Certificate file to install</td>
+            <td width="540" valign="top">Selects the certificate file to upload (must also upload    the key).</td>
+      </tr>
+          <tr>
+            <td width="264" valign="top">Key file to install</td>
+            <td width="540" valign="top">Selects the RSA public/private key pair to upload (must    also upload certificate).</td>
+      </tr>
+    </table>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+	</body>
+</html>

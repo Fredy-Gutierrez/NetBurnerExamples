@@ -1,0 +1,5 @@
+Doxygen Layout Page
+/** @pagegroup{pageExamples,Wifi,NBWIFIIN-100IR}
+
+This is the documentation for Wifi functionality.
+*/

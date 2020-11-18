@@ -1,0 +1,57 @@
+<HTML>
+<BODY>
+    <H1>Make a GIF </H1>
+    <FORM ACTION="MAKEGIF.HTM" METHOD=POST>
+        <B>Fill in the Data:</B><BR>
+        <TABLE>
+            <TR><TD> Canvas Height:</TD><TD><INPUT TYPE="text" NAME="canHt" VALUE="<!--FUNCTIONCALL DoCanHt -->" SIZE=5></TD></TR>
+            <TR><TD> Canvas Width:</TD><TD><INPUT TYPE="text" NAME="canWd" VALUE="<!--FUNCTIONCALL DoCanWd -->" SIZE=5></TD></TR>
+            <TR>
+                <TD> Fill Color </TD>
+                <TD>
+                    Red:<INPUT TYPE="text" NAME="FRed" VALUE="<!--FUNCTIONCALL DoFred -->" SIZE=3>
+                    Green:<INPUT TYPE="text" NAME="FGrn" VALUE="<!--FUNCTIONCALL DoFGrn -->" SIZE=3>
+                    Blue:<INPUT TYPE="text" NAME="FBlu" VALUE="<!--FUNCTIONCALL DoFBlu -->" SIZE=3>
+                </TD>
+            </TR>
+            <TR>
+                <TD> Border Color </TD>
+                <TD>
+                    Red:<INPUT TYPE="text" NAME="BRed" VALUE="<!--FUNCTIONCALL DoBRed -->" SIZE=3>
+                    Green:<INPUT TYPE="text" NAME="BGrn" VALUE="<!--FUNCTIONCALL DoBGrn -->" SIZE=3>
+                    Blue:<INPUT TYPE="text" NAME="BBlu" VALUE="<!--FUNCTIONCALL DoBBlu -->" SIZE=3>
+                </TD>
+            </TR>
+            <TR>
+                <TD> Text Color </TD>
+                <TD>
+                    Red:<INPUT TYPE="text" NAME="TRed" VALUE="<!--FUNCTIONCALL DoTRed -->" SIZE=3>
+                    Green:<INPUT TYPE="text" NAME="TGrn" VALUE="<!--FUNCTIONCALL DoTGrn -->" SIZE=3>
+                    Blue:<INPUT TYPE="text" NAME="TBlu" VALUE="<!--FUNCTIONCALL DoTBlu -->" SIZE=3>
+                </TD>
+            </TR>
+        </TABLE>
+        <input type="submit" value="Update Canvas">
+        <BR><BR>
+        <TABLE>
+            <TR>
+                <TD>Filled Box</TD>
+                <TD>Gradient Box</TD>
+            </TR>
+            <TR>
+                <TD><IMG SRC="<!--FUNCTIONCALL DoBox -->"></TD>
+                <TD><IMG SRC="<!--FUNCTIONCALL DoGradBox -->"></TD>
+            </TR>
+            <TR>
+                <TD>Box With Text</TD>
+                <TD>Random Box</TD>
+            </TR>
+            <TR>
+                <TD><IMG SRC="<!--FUNCTIONCALL DoTextBox -->"></TD>
+                <TD><IMG SRC="<!--FUNCTIONCALL DoRandomBox -->"></TD>
+            </TR>
+        </TABLE>
+    </FORM>
+</BODY>
+</HTML>
+

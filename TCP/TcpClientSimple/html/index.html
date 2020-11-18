@@ -1,0 +1,45 @@
+<html>
+<head>
+<title>NetBurner TCP Client Example Program</title>
+</head>
+
+<img src="logo.jpg">
+<br>
+<h1>TCP Client Example Program</h1>
+This example program will open a TCP connection to a TCP Server at 
+the specified IP address and send a message. A simple TCP Server, 
+TcpServerWin.exe, is included in the \nburn\pctools directory. 
+
+<form ACTION="index.html" METHOD=POST><br>
+
+<table>
+  <tr>
+    <td>Enter Message to send: </td>
+    <td><input NAME="tfMessage" TYPE="text" SIZE="30"></td>
+  </tr>
+
+  <tr>
+    <td>Destination Port: </td>
+    <td><input NAME="tfDestPortNum" <!--CPPCALL WebDestPort --> TYPE="text" SIZE="6"></td>
+  </tr>
+
+  <tr>
+    <td>Destination IP: </td>
+    <td><input NAME="tfDestIpAddr" <!--CPPCALL WebDestIp --> TYPE="text" SIZE="15"> 
+    (Your IP address is: <!--CPPCALL WebShowClientIp --> )
+    </td>
+  </tr>
+
+  <tr>
+    <td> <br></td>
+  </tr>
+
+  <tr>
+    <td><input NAME="SendMessage" TYPE="submit" VALUE="Send Message"></td>
+  </tr>
+  <br><br>
+</table>
+
+</form>
+</body>
+</html>

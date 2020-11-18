@@ -1,0 +1,5 @@
+Doxygen Layout Page
+/** @pagegroup{platformSpecific, platformMOD5441x, MOD5441x}
+
+MOD5441x Platform Examples
+*/

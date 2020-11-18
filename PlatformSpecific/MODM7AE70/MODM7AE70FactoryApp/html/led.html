@@ -1,0 +1,79 @@
+<html>
+<head>
+    <title>LED Demo</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="js/jquery-3.0.0.min.js"></script>
+    <script type="text/javascript" src="js/script.js"></script>
+</head>
+<body>
+    <div class="side">
+        <script>
+            $(".side").load("header.html nav");
+        </script>
+    </div>
+
+    <div id="container">
+        <br>
+        <h1>LED/Switch Control Example</h1>
+        <b>Click on the LED symbols below to toggle the LEDs on and off on the development board</b>:<br><br>
+        <table id="lights" class="led" align="center">
+            <tr>
+                <!--FUNCTIONCALL WebLeds -->
+            </tr>
+        </table>
+        <p>&nbsp;</p>
+        <p>
+            <b>State of the dip switches from WebSocket connection</b>:
+        </p>
+
+        <table id="switches" class="led switch" align="center">
+            <tr><td>Switch 1: <b><span id="switchVal_1">?</span></b></td></tr>
+            <tr><td>Switch 2: <b><span id="switchVal_2">?</span></b></td></tr>
+            <tr><td>Switch 3: <b><span id="switchVal_3">?</span></b></td></tr>
+            <tr><td>Switch 4: <b><span id="switchVal_4">?</span></b></td></tr>
+            <tr><td>Switch 5: <b><span id="switchVal_5">?</span></b></td></tr>
+            <tr><td>Switch 6: <b><span id="switchVal_6">?</span></b></td></tr>
+            <tr><td>Switch 7: <b><span id="switchVal_7">?</span></b></td></tr>
+            <tr><td>Switch 8: <b><span id="switchVal_8">?</span></b></td></tr>
+        </table>
+    </div>
+    <script>
+        // WebSocket Magic
+        var ws;
+        function CreateWebSocket() {
+            var urlStr = window.location.href;
+            urlStr = urlStr.replace("http", "ws");
+            if ("WebSocket" in window) {
+                if (ws != null) {
+                    console.log("Closing websocket before opening.");
+                    ws.close();
+                    ws = null;
+                }
+                if ((ws == null) || (ws.readyState == WebSocket.CLOSED)) {
+                    console.log("Starting websocket connection!");
+                    ws = new WebSocket(urlStr);
+                    ws.onopen = function () {
+                        console.log("WebSocket Opened!");
+                    };
+                    ws.onmessage = function (evt) {
+                        var updateData = JSON.parse(evt.data);
+
+                        for (var key in updateData["DipSwitches"]) {
+                            var newVal = (updateData["DipSwitches"][key] === true) ? "Up" : "Down";
+                            document.getElementById("switchVal_" + key).innerHTML = newVal;
+                        }
+                    }
+                    ws.onclose = function () {
+                        console.log("Closing websocket");
+                    };
+                }
+                else {
+                    console.log("WebSocket state: " + ws.readyState);
+                }
+            }
+        }
+
+        CreateWebSocket();
+    </script>
+</body>
+</html>
